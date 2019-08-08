@@ -16,10 +16,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['namespace' => 'Photo', 'prefix' => 'photo'], function(){
-   Route::resource('reviews', 'ReviewsController')->names('photo.reviews');
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], function(){
+    Route::resource('posts', 'PostController')->names('blog.posts');
 });
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+//Admin panel
+$groupData = [
+    'namespace' => 'Blog\Admin',
+    'prefix' => 'admin/blog',
+];
+Route::group($groupData, function() {
+    //BlogCategory
+   $methods = ['index', 'edit', 'store', 'update', 'create'];
+   Route::resource('categories', 'CategoryController')
+       ->only($methods)
+       ->names('blog.admin.categories');
+});
